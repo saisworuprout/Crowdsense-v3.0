@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -96,6 +96,14 @@ const normalizeCategories = (categories: Array<Partial<BudgetCategory> & { amoun
 };
 
 export default function BudgetTracker() {
+  return (
+    <Suspense fallback={<div className="p-12 font-black text-2xl uppercase">Loading Budget...</div>}>
+      <BudgetTrackerContent />
+    </Suspense>
+  );
+}
+
+function BudgetTrackerContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tripId = searchParams?.get('tripId');

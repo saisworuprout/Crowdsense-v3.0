@@ -118,7 +118,7 @@ export default function BudgetSplit() {
     const { data: budgetData, error: budgetError } = await supabase
       .from('budgets')
       .upsert({
-        trip_id: state.selectedTrip.id,
+        trip_id: state.selectedTrip!.id,
         total_amount: state.totalBudget,
         currency: state.currency,
         active_members: state.activeMembers,
@@ -141,7 +141,7 @@ export default function BudgetSplit() {
     }
 
     setCategoryAllocations(allocations);
-    router.push(`/budget/tracker?tripId=${state.selectedTrip.id}`);
+    router.push(`/budget/tracker?tripId=${state.selectedTrip!.id}`);
   };
 
   return (

@@ -10,11 +10,25 @@ import { useState } from 'react';
 // ============================================================
 const API_BASE_URL = '/api';
 
+interface PopularTimesDay {
+  name: string;
+  data: number[];
+}
+
+interface PopularTimesData {
+  name: string;
+  address?: string;
+  current_popularity: number | null;
+  populartimes: PopularTimesDay[];
+  current_wait_time: number | null;
+}
+
 // ============================================================
 // MOCK DATA - Fallback when API is unavailable
 // ============================================================
-const MOCK_DATA = {
+const MOCK_DATA: PopularTimesData = {
   "name": "Amber Fort",
+  "address": "Jaipur, India",
   "current_popularity": 67,
   "populartimes": [
     {"name": "Monday", "data": [0,0,0,0,0,0,8,15,28,45,62,75,82,78,65,55,42,35,20,12,8,4,0,0]},
@@ -35,7 +49,7 @@ const MOCK_DATA = {
 /**
  * Returns lowest non-zero consecutive 2-hour window from today's data
  */
-function getBestTime(hourlyData) {
+function getBestTime(hourlyData: number[]) {
   if (!hourlyData || hourlyData.length === 0) return { start: '9', end: '11', startHour: 9, endHour: 11 };
 
   let bestWindow = { start: '9', end: '11', startHour: 9, endHour: 11, minAvg: Infinity };
@@ -60,7 +74,7 @@ function getBestTime(hourlyData) {
   }
 
   // Format to 12-hour AM/PM
-  const formatHour = (h) => {
+  const formatHour = (h: number) => {
     if (h === 0) return '12 AM';
     if (h === 12) return '12 PM';
     if (h > 12) return `${h - 12} PM`;
@@ -76,7 +90,7 @@ function getBestTime(hourlyData) {
 /**
  * Returns "Ghost Town" / "Moderate" / "Busy" / "Packed"
  */
-function getCrowdLabel(score) {
+function getCrowdLabel(score: number | null | undefined) {
   if (score === 0 || score === undefined || score === null) return 'Unknown';
   if (score < 25) return 'Ghost Town';
   if (score < 50) return 'Moderate';
@@ -88,7 +102,7 @@ function getCrowdLabel(score) {
  * Returns hex color based on crowd score
  * Oatmeal → Sage → Amber → Terracotta
  */
-function getCrowdColor(score) {
+function getCrowdColor(score: number | null | undefined) {
   if (score === 0 || score === undefined || score === null) return '#90EE90'; // Light sage for no data
   if (score < 25) return '#8FBC8F'; // Dark sea green (sage)
   if (score < 50) return '#DAA520'; // Goldenrod (amber)
@@ -99,7 +113,7 @@ function getCrowdColor(score) {
 /**
  * Format hour index to readable time (6AM to 10PM)
  */
-function formatHourLabel(hourIndex) {
+function formatHourLabel(hourIndex: number) {
   if (hourIndex < 6 || hourIndex > 22) return '';
   const h = hourIndex % 12 || 12;
   const ampm = hourIndex < 12 ? 'A' : 'P';
@@ -113,11 +127,11 @@ function formatHourLabel(hourIndex) {
 export default function Alerts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedDayIndex, setSelectedDayIndex] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1); // Adjust for Monday-first index
-  const [data, setData] = useState(null);
-  const [hoveredBar, setHoveredBar] = useState(null);
-  const [hoveredCell, setHoveredCell] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
+  const [data, setData] = useState<PopularTimesData | null>(null);
+  const [hoveredBar, setHoveredBar] = useState<{ hour: number; value: number } | null>(null);
+  const [hoveredCell, setHoveredCell] = useState<{ day: string; hour: number; value: number } | null>(null);
 
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const fullDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -161,12 +175,13 @@ export default function Alerts() {
 
       setData(result);
       setSelectedDayIndex(getCurrentDayIndex());
-    } catch (err) {
-      console.error('[CrowdSense] Error:', err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[CrowdSense] Error:', message);
       // Fallback to mock data on any error
       setData(MOCK_DATA);
       setSelectedDayIndex(getCurrentDayIndex());
-      setError(err.message);
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -186,13 +201,13 @@ export default function Alerts() {
   const currentColor = hasLiveData ? getCrowdColor(displayData?.current_popularity) : '#90EE90';
 
   // Calculate needle rotation for gauge (0-100 maps to -90 to 90 degrees)
-  const needleRotation = hasLiveData ? ((displayData?.current_popularity) / 100) * 180 - 90 : -90;
+  const needleRotation = hasLiveData ? ((displayData!.current_popularity!) / 100) * 180 - 90 : -90;
 
   // Filter hourly data for bar chart (6 AM to 10 PM only)
   const filteredHourlyData = currentDayData.slice(6, 23);
 
   // Find max for scaling
-  const maxValue = Math.max(...filteredHourlyData.filter(v => v > 0), 50);
+  const maxValue = Math.max(...filteredHourlyData.filter((v: number) => v > 0), 50);
 
   // Generate radar dots based on popularity
   const radarDots = (() => {
