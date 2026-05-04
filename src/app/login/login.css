@@ -1,0 +1,84 @@
+.login-root {
+  background: #FFD700;
+  min-height: calc(100vh - 88px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 40px 0;
+}
+.login-root .grid-bg{position:absolute;inset:0;background-image:linear-gradient(#0A0A0A 1px,transparent 1px),linear-gradient(90deg,#0A0A0A 1px,transparent 1px);background-size:48px 48px;opacity:0.08;pointer-events:none}
+.login-root .stamp{position:absolute;top:32px;right:32px;background:#FF3D00;border:3px solid #0A0A0A;padding:8px 16px;font-size:11px;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:0.12em;color:#F5E642;transform:rotate(3deg);box-shadow:3px 3px 0 #0A0A0A; z-index: 20;}
+.login-root .wrapper{margin:auto;position:relative;z-index:10;display:grid;grid-template-columns:1fr 1fr;gap:0;max-width:900px;width:95%;border:3px solid #0A0A0A;box-shadow:10px 10px 0 #0A0A0A; background: #FAFAFA;}
+@media (max-width: 768px) {
+  .login-root .wrapper { grid-template-columns: 1fr; }
+}
+
+/* LEFT */
+.login-root .left-panel{background:#0A0A0A;padding:48px 40px;display:flex;flex-direction:column;justify-content:space-between;min-height:600px}
+.login-root .logo-mark{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.login-root .logo-icon{width:44px;height:44px;background:#F5E642;display:flex;align-items:flex-end;flex-direction:column;gap:3px;padding:8px 6px;justify-content:flex-end}
+.login-root .bar{background:#0A0A0A;height:3px}
+.login-root .bar1{width:100%;animation:b1 2.8s ease-in-out infinite}
+.login-root .bar2{width:60%;animation:b2 2.8s ease-in-out infinite .3s}
+.login-root .bar3{width:85%;animation:b3 2.8s ease-in-out infinite .6s}
+.login-root .bar4{width:40%;animation:b4 2.8s ease-in-out infinite .9s}
+@keyframes b1{0%,100%{width:100%}50%{width:70%}}
+@keyframes b2{0%,100%{width:60%}50%{width:100%}}
+@keyframes b3{0%,100%{width:85%}50%{width:45%}}
+@keyframes b4{0%,100%{width:40%}50%{width:90%}}
+.login-root .logo-text{font-size:22px;font-weight:800;color:#F5E642;letter-spacing:-0.02em}
+.login-root .tagline{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:0.15em;text-transform:uppercase;margin-top:4px}
+.login-root .live-pill{display:inline-flex;align-items:center;gap:6px;background:#F5E642;padding:4px 10px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#0A0A0A;font-weight:500;margin-top:16px}
+.login-root .pulse-dot{width:7px;height:7px;background:#FF3D00;border-radius:50%;animation:pr 1.2s ease-in-out infinite}
+@keyframes pr{0%,100%{transform:scale(1)}50%{transform:scale(1.4);opacity:.7}}
+.login-root .hero-headline{margin-top:auto;padding-top:48px}
+.login-root .big-word{display:block;font-size: clamp(48px, 6vw, 72px);font-weight:900;color:#F5E642;line-height:0.88;letter-spacing:-0.04em}
+.login-root .big-word.invert{color:#0A0A0A;-webkit-text-stroke:2px #F5E642}
+.login-root .crowd-stat{margin-top:28px;display:flex;gap:24px;border-top:1px solid #2a2a2a;padding-top:20px; flex-wrap: wrap;}
+.login-root .stat-num{font-size:26px;font-weight:800;color:#F5E642;line-height:1}
+.login-root .stat-label{font-family:'DM Mono',monospace;font-size:9px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-top:3px}
+
+/* RIGHT */
+.login-root .right-panel{background:#FAFAFA;padding:44px 44px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.login-root .section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#888;margin-bottom:26px;display:flex;align-items:center;gap:8px}
+.login-root .section-label::after{content:'';flex:1;height:1px;background:#ddd}
+.login-root .form-group{margin-bottom:18px}
+.login-root .form-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0A0A0A;margin-bottom:8px;display:block}
+.login-root .form-input{width:100%;border:2.5px solid #0A0A0A;padding:13px 16px;font-size:15px;font-weight:500;background:#F5E642;color:#0A0A0A;outline:none;transition:box-shadow 0.15s,transform 0.1s;border-radius:0}
+.login-root .form-input::placeholder{color:#888;font-weight:400}
+.login-root .form-input:focus{box-shadow:4px 4px 0 #0A0A0A;transform:translate(-2px,-2px)}
+.login-root .pw-wrap{position:relative}
+.login-root .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:#555;letter-spacing:0.06em;padding:0}
+.login-root .pw-toggle:hover{color:#0A0A0A}
+.login-root .form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;margin-top:-4px}
+.login-root .remember{display:flex;align-items:center;gap:8px;cursor:pointer}
+.login-root .cb{width:16px;height:16px;border:2px solid #0A0A0A;background:#fff;appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;flex-shrink:0}
+.login-root .cb:checked{background:#F5E642}
+.login-root .cb:checked::after{content:'';position:absolute;left:3px;top:0;width:5px;height:9px;border:2px solid #0A0A0A;border-left:none;border-top:none;transform:rotate(45deg)}
+.login-root .remember-text{font-size:12px;font-weight:500;color:#444}
+.login-root .forgot{font-size:12px;font-family:'DM Mono',monospace;color:#0A0A0A;text-decoration:none;border-bottom:1.5px solid #0A0A0A;padding-bottom:1px}
+.login-root .forgot:hover{background:#F5E642}
+
+/* LOGIN BUTTON */
+.login-root .btn-login{width:100%;border:2.5px solid #0A0A0A;padding:15px;font-size:15px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;background:#0A0A0A;color:#F5E642;cursor:pointer;transition:box-shadow 0.12s,transform 0.12s;box-shadow:5px 5px 0 #0A0A0A;border-radius:0;outline:none}
+.login-root .btn-login:hover{box-shadow:8px 8px 0 #FF3D00;transform:translate(-2px,-2px);background:#0A0A0A;color:#F5E642}
+.login-root .btn-login:active{box-shadow:2px 2px 0 #0A0A0A;transform:translate(2px,2px)}
+
+.login-root .divider{display:flex;align-items:center;gap:12px;margin:18px 0 14px}
+.login-root .divider-line{flex:1;height:1.5px;background:#0A0A0A}
+.login-root .divider-text{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#0A0A0A;font-weight:500;white-space:nowrap}
+
+/* SOCIAL */
+.login-root .social-row{display:flex;align-items:flex-start;justify-content:center;gap:20px}
+.login-root .social-item{display:flex;flex-direction:column;align-items:center;gap:6px}
+.login-root .social-btn{width:56px;height:56px;border-radius:50%;border:2.5px solid #0A0A0A;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:box-shadow 0.12s,transform 0.12s;box-shadow:4px 4px 0 #0A0A0A;outline:none;flex-shrink:0}
+.login-root .social-btn:hover{box-shadow:6px 6px 0 #0A0A0A;transform:translate(-2px,-2px);background:#F5E642}
+.login-root .social-btn:active{box-shadow:1px 1px 0 #0A0A0A;transform:translate(2px,2px)}
+.login-root .social-divider{width:1.5px;height:32px;background:#ccc;margin-top:12px}
+.login-root .social-name{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;text-align:center;color:#888;text-transform:uppercase}
+
+.login-root .signup-prompt{margin-top:20px;text-align:center;font-size:12px;font-family:'DM Mono',monospace;color:#666;letter-spacing:0.06em}
+.login-root .signup-link{color:#0A0A0A;font-weight:500;border-bottom:1.5px solid #0A0A0A;text-decoration:none;padding-bottom:1px}
+.login-root .signup-link:hover{background:#F5E642}
+.login-root .corner-badge{position:absolute;bottom:-3px;right:-3px;background:#FF3D00;border:2.5px solid #0A0A0A;padding:6px 12px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;color:#fff;font-weight:500}
