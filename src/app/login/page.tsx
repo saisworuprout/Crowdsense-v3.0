@@ -9,6 +9,7 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false);
   const [loginState, setLoginState] = useState('➔ Enter CrowdSense');
   const [socialStates, setSocialStates] = useState({ google: false });
+  const [errorMessage, setErrorMessage] = useState('');
   
   // Auth Form State
   const [email, setEmail] = useState('');
@@ -17,10 +18,12 @@ export default function Login() {
 
   const handleAuth = async () => {
     const cleanedEmail = email.trim();
+    setErrorMessage('');
     
     if (!cleanedEmail || !password) {
       const orig = loginState;
       setLoginState('MISSING CREDENTIALS');
+      setErrorMessage('Please enter both email and password.');
       setTimeout(() => setLoginState(orig), 2000);
       return;
     }
@@ -39,6 +42,7 @@ export default function Login() {
 
     if (errorResponse) {
       setLoginState('ERROR: INVALID');
+      setErrorMessage(errorResponse.message);
       console.error(errorResponse.message);
       setTimeout(() => setLoginState(isSignUp ? '➔ Join CrowdSense' : '➔ Enter CrowdSense'), 3000);
     } else {
@@ -68,6 +72,7 @@ export default function Login() {
   const toggleMode = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsSignUp(!isSignUp);
+    setErrorMessage('');
     setLoginState(!isSignUp ? '➔ Join CrowdSense' : '➔ Enter CrowdSense');
   };
 
@@ -158,6 +163,12 @@ export default function Login() {
             <button className="btn-login" onClick={handleAuth} style={{ opacity: loginState === 'CHECKING...' ? 0.7 : 1 }}>
               {loginState}
             </button>
+            
+            {errorMessage && (
+              <div style={{ color: '#FF3D00', fontSize: '13px', marginTop: '12px', textAlign: 'center', fontWeight: 'bold', fontFamily: "'DM Mono', monospace" }}>
+                {errorMessage}
+              </div>
+            )}
             
             <div className="divider">
               <div className="divider-line"></div>
