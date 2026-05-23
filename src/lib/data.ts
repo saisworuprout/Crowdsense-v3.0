@@ -41,3 +41,169 @@ export async function getTripById(id: string): Promise<Trip | undefined> {
     }, 10);
   });
 }
+
+type ItinerarySeed = {
+  morning: string[];
+  afternoon: string[];
+  evening: string[];
+  transit: string[];
+  flavor: string;
+};
+
+const itinerarySeeds: Record<string, ItinerarySeed> = {
+  "16": {
+    morning: ["Amber Fort sunrise ramparts", "Hawa Mahal photo lanes", "City Palace courtyards", "Jantar Mantar observatory"],
+    afternoon: ["Johari Bazaar gem hunt", "Patrika Gate color stop", "Nahargarh Fort sunset wall", "Panna Meena stepwell"],
+    evening: ["MI Road laal maas dinner", "Rooftop thali near Badi Chaupar", "Lassi at Lassiwala", "Chokhi Dhani folk night"],
+    transit: ["Pink City tuk-tuk loop", "Old Jaipur heritage walk", "Amer road fort run"],
+    flavor: "Jaipur craft, royal history, and market energy"
+  },
+  "17": {
+    morning: ["Anjuna Beach swim", "Fontainhas color walk", "Chapora Fort cliff view", "Ashwem surf session"],
+    afternoon: ["Mapusa Market snack crawl", "Old Goa basilica stop", "Mandrem hammock break", "Reis Magos Fort"],
+    evening: ["Baga shack dinner", "Arpora night market", "Assagao live music bar", "Palolem beach bonfire"],
+    transit: ["Scooter coast hop", "North Goa beach trail", "Mandovi ferry crossing"],
+    flavor: "salt air, markets, seafood, and late beach music"
+  },
+  "18": {
+    morning: ["Alleppey houseboat cruise", "Kumarakom bird sanctuary", "Fort Kochi Chinese nets", "Marari Beach slow start"],
+    afternoon: ["Munnar tea garden walk", "Thekkady spice plantation", "Mattancherry Palace", "Vembanad canoe ride"],
+    evening: ["Kathakali show in Kochi", "Backwater seafood dinner", "Ayurveda massage wind-down", "Coconut toddy shop meal"],
+    transit: ["Backwater canoe transfer", "Hill road spice drive", "Kochi ferry ride"],
+    flavor: "green water, spice, fish curry, and unhurried mornings"
+  },
+  "19": {
+    morning: ["Dashashwamedh Ghat sunrise boat", "Kashi Vishwanath corridor", "Assi Ghat chai stop", "Sarnath ruins"],
+    afternoon: ["Banarasi silk lane walk", "Ramnagar Fort", "Blue Lassi old city break", "Manikarnika viewpoint"],
+    evening: ["Ganga Aarti river steps", "Kachori sabzi crawl", "Classical music baithak", "Rooftop thali by the ghats"],
+    transit: ["Old lane walking maze", "Ghat-to-ghat boat ride", "Cycle rickshaw market hop"],
+    flavor: "rituals, river light, temple bells, and dense old lanes"
+  },
+  "20": {
+    morning: ["Shanti Stupa sunrise", "Thiksey Monastery prayers", "Pangong Tso blue shore", "Nubra Valley dunes"],
+    afternoon: ["Khardung La pass halt", "Hemis Monastery", "Diskit Buddha viewpoint", "Leh Market wool stop"],
+    evening: ["Ladakhi thukpa dinner", "Campfire under Nubra stars", "Leh cafe acclimatization", "Changspa road momo run"],
+    transit: ["High-pass acclimatization drive", "Indus valley monastery loop", "Pangong road expedition"],
+    flavor: "thin-air roads, monasteries, lakes, and mountain silence"
+  },
+  "21": {
+    morning: ["Gateway of India ferry front", "Kala Ghoda art walk", "Dadar flower market", "Marine Drive morning curve"],
+    afternoon: ["CST heritage stop", "Bandra street art lanes", "Chor Bazaar dig", "Crawford Market spice run"],
+    evening: ["Mohammed Ali Road kebabs", "Juhu chaat crawl", "Colaba Irani cafe dinner", "Worli sea-face wind-down"],
+    transit: ["Local train food hop", "Bandra-Colaba cab trail", "Fort district walking loop"],
+    flavor: "street food, sea breeze, heritage facades, and midnight snacks"
+  },
+  "22": {
+    morning: ["Jemaa el-Fnaa orange juice start", "Bahia Palace tiles", "Koutoubia garden walk", "Ben Youssef Madrasa"],
+    afternoon: ["Souk Semmarine spice lanes", "Majorelle Garden", "El Badi Palace ruins", "Medina leather workshop"],
+    evening: ["Riad rooftop tagine", "Hammam reset", "Storytellers in Jemaa el-Fnaa", "Mint tea at sunset"],
+    transit: ["Medina walking maze", "Horse carriage wall loop", "Atlas foothill day drive"],
+    flavor: "souks, riads, spice smoke, tilework, and mint tea"
+  },
+  "23": {
+    morning: ["Table Mountain cableway", "Bo-Kaap color walk", "Boulders penguin beach", "Sea Point promenade"],
+    afternoon: ["Cape Point drive", "Kirstenbosch gardens", "Constantia wine tasting", "Zeitz MOCAA art stop"],
+    evening: ["V&A Waterfront dinner", "Camps Bay sunset", "Kloof Street bar hop", "Harbour seafood table"],
+    transit: ["Chapman's Peak coast road", "City Bowl walking loop", "Winelands shuttle"],
+    flavor: "mountain views, ocean roads, wine, and bright neighborhoods"
+  },
+  "24": {
+    morning: ["Hagia Sophia first light", "Blue Mosque courtyard", "Galata Tower climb", "Balat color lanes"],
+    afternoon: ["Grand Bazaar bargaining", "Topkapi Palace", "Bosphorus ferry crossing", "Kadikoy market crawl"],
+    evening: ["Karakoy baklava stop", "Meyhane dinner in Beyoglu", "Turkish hammam", "Ortakoy kumpir by the water"],
+    transit: ["Bosphorus ferry hop", "Sultanahmet heritage walk", "Europe-to-Asia food trail"],
+    flavor: "ferries, domes, markets, tea glasses, and layered city history"
+  },
+  "25": {
+    morning: ["Alfama tram climb", "Miradouro da Senhora do Monte", "Belem Tower", "LX Factory browse"],
+    afternoon: ["Jerónimos Monastery", "Chiado tile hunt", "MAAT riverside walk", "Time Out Market tasting"],
+    evening: ["Fado night in Alfama", "Pastel de nata at Manteigaria", "Bairro Alto drinks", "Tagus sunset ferry"],
+    transit: ["Tram 28 hill loop", "Tagus ferry crossing", "Baixa-to-Alfama walking climb"],
+    flavor: "tiles, tram bells, custard tarts, river light, and fado"
+  },
+  "26": {
+    morning: ["Burj Khalifa skyline deck", "Jumeirah Beach swim", "Al Fahidi historic quarter", "Dubai Marina walk"],
+    afternoon: ["Museum of the Future", "Gold Souk bargaining", "Desert dune safari", "Palm Jumeirah viewpoint"],
+    evening: ["Dubai Fountain show", "Desert camp dinner", "Rooftop lounge near DIFC", "Creekside abra ride"],
+    transit: ["Metro skyline run", "Desert 4x4 transfer", "Creek abra crossing"],
+    flavor: "skyline polish, souks, beach clubs, and desert heat"
+  },
+  "27": {
+    morning: ["Hoan Kiem Lake lap", "Old Quarter pho breakfast", "Temple of Literature", "Train Street coffee"],
+    afternoon: ["Dong Xuan Market", "West Lake pagoda loop", "Vietnam Museum of Ethnology", "Bun cha lunch crawl"],
+    evening: ["Beer Corner stools", "Egg coffee stop", "Water puppet theatre", "Night market skewers"],
+    transit: ["Old Quarter scooter crawl", "Lake-to-market walking loop", "Cyclo heritage ride"],
+    flavor: "scooters, broth steam, lake walks, and sidewalk stools"
+  },
+  "28": {
+    morning: ["Skyline gondola view", "Lake Wakatipu walk", "Shotover Jet ride", "Arrowtown gold lanes"],
+    afternoon: ["Kawarau bungy bridge", "Glenorchy road drive", "Ben Lomond hike", "Onsen hot pools"],
+    evening: ["Fergburger refuel", "Lakeside craft beer", "Remarkables sunset stop", "Adventure bar night"],
+    transit: ["Glenorchy scenic road", "Lakefront walking loop", "Adventure shuttle circuit"],
+    flavor: "alpine air, adrenaline, lake edges, and big road views"
+  },
+  "29": {
+    morning: ["Acropolis early entry", "Plaka stair lanes", "Ancient Agora", "Monastiraki flea market"],
+    afternoon: ["National Archaeological Museum", "Lycabettus Hill", "Piraeus ferry scouting", "Anafiotika whitewashed lanes"],
+    evening: ["Souvlaki in Psiri", "Rooftop Acropolis view", "Taverna dinner in Plaka", "Sunset at Cape Sounion"],
+    transit: ["Metro archaeology loop", "Piraeus ferry hop", "Old Athens walking climb"],
+    flavor: "ruins, island plans, souvlaki, marble, and sunset steps"
+  },
+  "30": {
+    morning: ["Ipanema beach swim", "Christ the Redeemer", "Selaron Steps", "Sugarloaf cable car"],
+    afternoon: ["Santa Teresa art lanes", "Copacabana boardwalk", "Maracana stadium stop", "Tijuca Forest lookout"],
+    evening: ["Lapa samba night", "Feijoada dinner", "Sunset at Arpoador", "Carnival rehearsal block"],
+    transit: ["Beach-to-hill city loop", "Metro and cable car hop", "Samba neighborhood trail"],
+    flavor: "beach mornings, hilltop views, samba, and carnival color"
+  }
+};
+
+const fallbackSeed: ItinerarySeed = {
+  morning: ["Old town orientation walk", "Signature viewpoint", "Main heritage landmark", "Neighborhood coffee stop"],
+  afternoon: ["Local market crawl", "Museum and culture block", "Scenic park pause", "Hidden lane photo walk"],
+  evening: ["Regional dinner table", "Sunset viewpoint", "Live music stop", "Late dessert run"],
+  transit: ["Neighborhood walking loop", "Local transit hop", "Viewpoint transfer"],
+  flavor: "local landmarks, food, viewpoints, and neighborhood texture"
+};
+
+export function buildTripItinerary(trip: Pick<Trip, 'id' | 'days' | 'title' | 'vibe'>) {
+  const seed = itinerarySeeds[trip.id] || fallbackSeed;
+
+  return Array.from({ length: trip.days }, (_, i) => {
+    const dayNumber = i + 1;
+    const morning = seed.morning[i % seed.morning.length];
+    const afternoon = seed.afternoon[(i + 1) % seed.afternoon.length];
+    const evening = seed.evening[(i + 2) % seed.evening.length];
+    const transit = seed.transit[i % seed.transit.length];
+
+    return {
+      dayNumber,
+      events: [
+        {
+          id: `${trip.id}-${dayNumber}-morning`,
+          time: '09:00 AM',
+          title: morning,
+          location: transit,
+          description: `Start with ${seed.flavor.toLowerCase()} around ${morning}.`,
+          type: 'activity' as const
+        },
+        {
+          id: `${trip.id}-${dayNumber}-afternoon`,
+          time: '02:00 PM',
+          title: afternoon,
+          location: `${trip.vibe || 'Local'} focus`,
+          description: `Keep the route specific to ${trip.title}: ${afternoon} fits the day's pace without feeling generic.`,
+          type: 'travel' as const
+        },
+        {
+          id: `${trip.id}-${dayNumber}-evening`,
+          time: '07:30 PM',
+          title: evening,
+          location: 'Dinner + night plan',
+          description: `Close the day with a place-led evening built around ${evening}.`,
+          type: 'dining' as const
+        }
+      ]
+    };
+  });
+}

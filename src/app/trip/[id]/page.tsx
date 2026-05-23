@@ -1,9 +1,14 @@
 import Link from 'next/link';
-import { getTripById } from '@/lib/data';
+import { buildTripItinerary, getTripById } from '@/lib/data';
 import { notFound } from 'next/navigation';
-import { Trip, ItineraryDay, ItineraryEvent } from '@/lib/types';
+import { Trip } from '@/lib/types';
 import { CloneButton } from '@/components/ui/CloneButton';
 import { supabase } from '@/lib/supabaseClient';
+
+type SupabaseItineraryDay = {
+  id: string;
+  day_number: number;
+};
 
 async function getTripData(id: string) {
   // First check if it's a UUID (Supabase trip) or string (mock trip)
@@ -31,7 +36,7 @@ async function getTripData(id: string) {
     if (trip) {
       // Fetch itinerary events for each day
       const daysWithEvents = await Promise.all(
-        (trip.itinerary_days || []).map(async (day: any) => {
+        ((trip.itinerary_days || []) as SupabaseItineraryDay[]).map(async (day) => {
           const { data: events } = await supabase
             .from('itinerary_events')
             .select('*')
@@ -75,15 +80,7 @@ export default async function TripDetail({ params }: { params: Promise<{ id: str
     notFound();
   }
 
-  // Mock a full itinerary if not provided in the data.ts
-  const itinerary = trip.itinerary || Array.from({ length: trip.days }, (_, i) => ({
-    dayNumber: i + 1,
-    events: [
-      { id: '1', time: '10:00 AM', title: 'Local Market Exp.', location: '', description: 'Immersive exploration of the area and its best kept secrets.', type: 'activity' },
-      { id: '2', time: '02:00 PM', title: 'Historical District', location: '', description: 'Discover popular landmarks and architecture.', type: 'travel' },
-      { id: '3', time: '07:00 PM', title: 'Street Food Tour', location: '', description: 'Enjoy local cuisine and nightlife.', type: 'dining' }
-    ]
-  } as ItineraryDay));
+  const itinerary = trip.itinerary || buildTripItinerary(trip);
 
   const getEventStyle = (index: number) => {
     if (index === 1) return { bg: 'bg-[#f90680] text-white', tagBg: 'bg-white text-black' };

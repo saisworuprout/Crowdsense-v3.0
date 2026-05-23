@@ -1,7 +1,6 @@
-import { supabase } from '@/lib/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { allTrips } from '@/lib/data';
+import { allTrips, buildTripItinerary } from '@/lib/data';
 
 export async function POST(request: NextRequest) {
   try {
@@ -126,31 +125,42 @@ export async function POST(request: NextRequest) {
         }
       }
     } else {
-      // It's a mock trip, so generate mock itinerary matching the trip details page
-      for (let i = 0; i < (tripDataToClone.days || 1); i++) {
+      // It's a mock trip, so generate the same destination-specific itinerary shown on the trip page.
+      const sourceTrip = allTrips.find(t => t.id === tripId);
+      const generatedItinerary = buildTripItinerary(sourceTrip || {
+        id: tripId,
+        title: tripDataToClone.title,
+        days: tripDataToClone.days || 1,
+        vibe: tripDataToClone.vibe,
+      });
+
+      for (const day of generatedItinerary) {
         const { data: newDay } = await supabaseClient
           .from('itinerary_days')
           .insert({
             trip_id: newTrip.id,
-            day_number: i + 1,
+            day_number: day.dayNumber,
           })
           .select()
           .single();
 
         if (newDay) {
-          const mockEvents = [
-            { day_id: newDay.id, time: '10:00 AM', title: 'Local Market Exp.', location: '', description: 'Immersive exploration of the area and its best kept secrets.', type: 'activity' },
-            { day_id: newDay.id, time: '02:00 PM', title: 'Historical District', location: '', description: 'Discover popular landmarks and architecture.', type: 'travel' },
-            { day_id: newDay.id, time: '07:00 PM', title: 'Street Food Tour', location: '', description: 'Enjoy local cuisine and nightlife.', type: 'dining' }
-          ];
-          await supabaseClient.from('itinerary_events').insert(mockEvents);
+          const eventsToInsert = day.events.map(ev => ({
+            day_id: newDay.id,
+            time: ev.time,
+            title: ev.title,
+            location: ev.location,
+            description: ev.description,
+            type: ev.type,
+          }));
+          await supabaseClient.from('itinerary_events').insert(eventsToInsert);
         }
       }
     }
 
     return NextResponse.json({ success: true, tripId: newTrip.id });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Clone trip error:', error);
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal server error' }, { status: 500 });
   }
 }
